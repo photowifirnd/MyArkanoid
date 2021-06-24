@@ -25,6 +25,12 @@ export const BALL_SIZE = 20;
 export const BALL_STARTX = 500;
 export const BALL_STARTY = 400;
 
+export const OBSTACLE_SPEED = 5;
+export const OBSTACLE_WIDTH = 150;
+export const OBSTACLE_HEIGHT = 25;
+export const OBSTACLE_STARTX = 200;
+export const OBSTACLE_STARTY = 100;
+
 export const BRICK_IMAGES: { [key: number]: string } =
 {
     1: RED_BRICK_IMAGE,

@@ -2,6 +2,7 @@ import { Brick } from "./sprites/Brick";
 import { Paddle } from "./sprites/Paddle";
 import { Ball } from "./sprites/Ball";
 import { CanvasView } from "./view/CanvasView";
+import { Obstacle } from "./sprites/obstacle";
 
 export class Collision {
 
@@ -52,6 +53,30 @@ export class Collision {
 
         if (ball.pos.y < 0) {
             ball.changeYDirection();
+        }
+    }
+    isCollidingObstacle(ball: Ball, obs: Obstacle): boolean {
+        if (
+            ball.pos.x < obs.pos.x + obs.width &&
+            ball.pos.x + ball.width > obs.pos.x &&
+            ball.pos.y < obs.pos.y + obs.height &&
+            ball.pos.y + ball.height > obs.pos.y
+        ) {
+            ball.changeYDirection();
+            return true;
+        }
+        return false;
+    }
+    checkObstacleCollision(obs: Obstacle, view: CanvasView): void {
+        if (
+            obs.pos.x > view.canvas.width - obs.width ||
+            obs.pos.x < 0
+        ) {
+            obs.changeXDirection();
+        }
+
+        if (obs.pos.y < 0) {
+            obs.changeXDirection();
         }
     }
 }

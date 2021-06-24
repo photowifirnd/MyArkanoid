@@ -3,10 +3,12 @@ import { CanvasView } from './view/CanvasView';
 import { Ball } from './sprites/Ball';
 import { Brick } from './sprites/Brick';
 import { Paddle } from './sprites/Paddle';
+import { Obstacle } from './sprites/obstacle';
 import { Collision } from './Collision';
 
 import PADDLE_IMAGE from './images/paddle.png';
 import BALL_IMAGE from './images/ball.png';
+import OBSTACLE_IMAGE from './images/obstacle.png';
 
 import {
     PADDLE_SPEED,
@@ -16,7 +18,12 @@ import {
     BALL_SPEED,
     BALL_SIZE,
     BALL_STARTX,
-    BALL_STARTY
+    BALL_STARTY,
+    OBSTACLE_SPEED,
+    OBSTACLE_WIDTH,
+    OBSTACLE_HEIGHT,
+    OBSTACLE_STARTX,
+    OBSTACLE_STARTY
 } from './config';
 
 import { createBricks } from './helpers'
@@ -38,15 +45,19 @@ function gameLoop(
     bricks: Brick[],
     paddle: Paddle,
     ball: Ball,
-    collision: Collision
+    collision: Collision,
+    obstacle: Obstacle
 ) {
     console.log('draw!');
     view.clear();
     view.drawBricks(bricks);
     view.drawSprite(paddle);
+    view.drawSprite(obstacle);
     view.drawSprite(ball);
     // Move Ball
     ball.moveBall();
+    obstacle.moveObstacle(); //check if obstacle exit the playField??
+
 
     // Move paddle and check so it won't exit the playfield
     if (
@@ -57,7 +68,9 @@ function gameLoop(
     }
 
     collision.checkBallCollision(ball, paddle, view);
+    collision.checkObstacleCollision(obstacle, view);
     const collidingBrick = collision.isCollidingBricks(ball, bricks);
+    collision.isCollidingObstacle(ball, obstacle);
 
     if (collidingBrick) {
         score += 1;
@@ -75,7 +88,7 @@ function gameLoop(
     if (gameOver)
         return setGameOver(view);
 
-    requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball, collision));
+    requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball, collision, obstacle));
 }
 
 function startGame(view: CanvasView) {
@@ -106,7 +119,18 @@ function startGame(view: CanvasView) {
         PADDLE_IMAGE
     );
 
-    gameLoop(view, bricks, paddle, ball, collision);
+    const obstacle = new Obstacle(
+        OBSTACLE_WIDTH,
+        OBSTACLE_HEIGHT,
+        OBSTACLE_SPEED,
+        {
+            x: OBSTACLE_STARTX,
+            y: view.canvas.height - OBSTACLE_HEIGHT - 200
+        },
+        OBSTACLE_IMAGE
+    );
+
+    gameLoop(view, bricks, paddle, ball, collision, obstacle);
 }
 
 const view = new CanvasView('#playField');
